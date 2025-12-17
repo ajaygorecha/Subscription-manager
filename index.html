@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0d6efd">
-    <meta name="description" content="Personal Subscription Manager - Track all your subscriptions in one place">
+    <meta name="theme-color" content="#2F80ED">
+    <meta name="description" content="Personal Subscription Manager - Track all your subscriptions">
     <title>Subscription Manager</title>
     
     <!-- Bootstrap CSS -->
@@ -16,309 +16,665 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="#" id="manifest-placeholder">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💳</text></svg>">
-    
     <style>
         :root {
-            --primary-color: #0d6efd;
-            --success-color: #198754;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #0dcaf0;
-            --dark-color: #212529;
-            --light-bg: #f8f9fa;
+            --primary-blue: #2F80ED;
+            --success-green: #27AE60;
+            --yearly-blue: #3498DB;
+            --text-dark: #1F2937;
+            --text-muted: #6B7280;
+            --bg-light: #F8F9FA;
+            --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background-color: #f5f7fa;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-light);
+            padding-bottom: 70px;
         }
 
-        .navbar {
-            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        /* Header */
+        .app-header {
+            background: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .install-prompt {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1050;
-            animation: slideInUp 0.3s ease-out;
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        @keyframes slideInUp {
-            from {
-                transform: translateY(100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .stats-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-        }
-
-        .stats-card .card-body {
-            padding: 1.5rem;
-        }
-
-        .stats-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-blue);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            margin-bottom: 1rem;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
         }
 
-        .subscription-card {
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-light);
             border: none;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-            transition: all 0.3s ease;
-            margin-bottom: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 20px;
+            cursor: pointer;
         }
 
-        .subscription-card:hover {
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .subscription-logo {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-            border-radius: 10px;
-            padding: 8px;
-            background: white;
-            border: 1px solid #e9ecef;
+        /* Section Header */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
         }
 
-        .subscription-type-badge {
-            font-size: 0.75rem;
-            padding: 0.35rem 0.65rem;
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .currency-toggle {
+            display: flex;
+            gap: 8px;
+        }
+
+        .currency-btn {
+            width: 32px;
+            height: 32px;
             border-radius: 6px;
+            border: none;
+            background: white;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .currency-btn.active {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Info Badge */
+        .info-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: white;
+            border-left: 3px solid var(--primary-blue);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .info-badge i {
+            color: var(--primary-blue);
+            font-size: 20px;
+        }
+
+        .info-badge span {
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        .info-badge strong {
+            color: var(--primary-blue);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .stat-card.primary {
+            background: linear-gradient(135deg, #2F80ED 0%, #1E5FCC 100%);
+            color: white;
+        }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            opacity: 0.9;
+        }
+
+        .stat-card.primary .stat-card-header {
+            opacity: 1;
+        }
+
+        .stat-icon {
+            font-size: 20px;
+        }
+
+        .stat-label {
+            font-size: 14px;
             font-weight: 500;
         }
 
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .stat-card.primary .stat-value {
+            color: white;
+        }
+
+        /* Subscription List */
+        .subscription-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .subscription-item {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .subscription-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .sub-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .sub-info {
+            flex: 1;
+        }
+
+        .sub-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .sub-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .sub-type-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .sub-type-badge.monthly {
+            background: #D1FAE5;
+            color: var(--success-green);
+        }
+
+        .sub-type-badge.yearly {
+            background: #DBEAFE;
+            color: var(--yearly-blue);
+        }
+
+        .sub-type-badge.daily {
+            background: #FEF3C7;
+            color: #F59E0B;
+        }
+
+        .sub-details {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 4px;
+        }
+
+        .sub-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .sub-date {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 8px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-muted);
+            transition: color 0.2s;
+            border: none;
+            background: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary-blue);
+        }
+
+        .nav-item i {
+            font-size: 22px;
+        }
+
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #E5E7EB;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h5 {
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Add Button */
+        .add-btn {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--primary-blue);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(47, 128, 237, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s;
+            z-index: 999;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal Styles */
         .modal-content {
-            border-radius: 15px;
+            border-radius: 16px;
             border: none;
         }
 
         .modal-header {
-            border-bottom: 1px solid #e9ecef;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 15px 15px 0 0;
+            background: var(--bg-light);
+            border-radius: 16px 16px 0 0;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            color: var(--text-dark);
         }
 
         .form-label {
             font-weight: 600;
-            color: #495057;
-            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
         .form-control, .form-select {
             border-radius: 10px;
-            border: 1px solid #dee2e6;
-            padding: 0.625rem 0.875rem;
+            border: 1px solid #E5E7EB;
+            padding: 10px 14px;
+            font-size: 14px;
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
-        }
-
-        .btn {
-            border-radius: 10px;
-            padding: 0.625rem 1.25rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.1);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            background: var(--primary-blue);
             border: none;
+            border-radius: 10px;
+            padding: 10px 24px;
+            font-weight: 600;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            background: #1E5FCC;
+        }
+
+        .btn-secondary {
+            border-radius: 10px;
+            padding: 10px 24px;
+        }
+
+        .logo-preview-container {
+            margin-top: 12px;
         }
 
         .logo-preview {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
+            width: 80px;
+            height: 80px;
             border-radius: 10px;
-            border: 2px solid #dee2e6;
-            padding: 10px;
+            object-fit: contain;
+            border: 2px solid #E5E7EB;
+            padding: 8px;
             background: white;
-            margin-top: 10px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
+        /* Hidden Sections */
+        .content-section {
+            display: none;
         }
 
-        .empty-state i {
-            font-size: 5rem;
-            color: #dee2e6;
-            margin-bottom: 1.5rem;
+        .content-section.active {
+            display: block;
         }
 
-        .amount-display {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark-color);
-        }
-
-        .currency-toggle {
-            display: inline-flex;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #dee2e6;
-        }
-
-        .currency-toggle button {
-            border: none;
+        /* Report Page Styles */
+        .report-card {
             background: white;
-            padding: 0.4rem 1rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #6c757d;
-            transition: all 0.2s;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 16px;
         }
 
-        .currency-toggle button.active {
-            background: var(--primary-color);
-            color: white;
+        .report-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 16px;
         }
 
-        @media (max-width: 768px) {
-            .stats-card {
-                margin-bottom: 1rem;
-            }
-            
-            .subscription-card {
-                font-size: 0.9rem;
+        .report-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .report-item:last-child {
+            border-bottom: none;
+        }
+
+        .report-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .report-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-dark">
-        <div class="container">
-            <span class="navbar-brand mb-0 h1">
-                <i class="ri-bank-card-line"></i> Subscription Manager
-            </span>
-            <div class="currency-toggle">
-                <button id="currencyINR" class="active" onclick="switchCurrency('INR')">INR</button>
-                <button id="currencyUSD" onclick="switchCurrency('USD')">USD</button>
-            </div>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo-section">
+            <div class="logo-icon">₹</div>
+            <h1 class="app-title">Subscription Manager</h1>
         </div>
+        <button class="menu-btn" onclick="openMenu()">
+            <i class="ri-menu-line"></i>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- HOME SECTION -->
+        <section id="homeSection" class="content-section active">
+            <div class="section-header">
+                <h2 class="section-title">Dashboard</h2>
+                <div class="currency-toggle">
+                    <button class="currency-btn active" id="currencyINR" onclick="switchCurrency('INR')">₹</button>
+                    <button class="currency-btn" id="currencyUSD" onclick="switchCurrency('USD')">$</button>
+                </div>
+            </div>
+
+            <div class="info-badge">
+                <i class="ri-information-line"></i>
+                <span>You have total <strong id="totalCount">0</strong> active subscription</span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card primary">
+                    <div class="stat-card-header">
+                        <i class="ri-calendar-line stat-icon"></i>
+                        <span class="stat-label">Monthly Spend</span>
+                    </div>
+                    <div class="stat-value" id="monthlySpend">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <i class="ri-calendar-check-line stat-icon"></i>
+                        <span class="stat-label">Yearly spend</span>
+                    </div>
+                    <div class="stat-value" id="yearlySpend">$0</div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Active Subscription</h2>
+                <div class="currency-toggle">
+                    <button class="currency-btn active" id="currencyINR2" onclick="switchCurrency('INR')">₹</button>
+                    <button class="currency-btn" id="currencyUSD2" onclick="switchCurrency('USD')">$</button>
+                </div>
+            </div>
+
+            <div class="subscription-list" id="subscriptionList">
+                <div class="empty-state">
+                    <i class="ri-inbox-line"></i>
+                    <h5>No Subscriptions Yet</h5>
+                    <p>Tap the + button to add your first subscription</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUBSCRIPTION SECTION -->
+        <section id="subscriptionSection" class="content-section">
+            <div class="section-header" style="margin-bottom: 24px;">
+                <h2 class="section-title">All Subscriptions</h2>
+                <div class="currency-toggle">
+                    <button class="currency-btn active" id="currencyINR3" onclick="switchCurrency('INR')">₹</button>
+                    <button class="currency-btn" id="currencyUSD3" onclick="switchCurrency('USD')">$</button>
+                </div>
+            </div>
+
+            <div class="subscription-list" id="allSubscriptionList">
+                <div class="empty-state">
+                    <i class="ri-inbox-line"></i>
+                    <h5>No Subscriptions Yet</h5>
+                    <p>Tap the + button to add your first subscription</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- REPORT SECTION -->
+        <section id="reportSection" class="content-section">
+            <div class="section-header" style="margin-bottom: 24px;">
+                <h2 class="section-title">Reports</h2>
+                <div class="currency-toggle">
+                    <button class="currency-btn active" id="currencyINR4" onclick="switchCurrency('INR')">₹</button>
+                    <button class="currency-btn" id="currencyUSD4" onclick="switchCurrency('USD')">$</button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-title">Spending Overview</div>
+                <div class="report-item">
+                    <span class="report-label">Daily Average</span>
+                    <span class="report-value" id="dailyAvg">$0</span>
+                </div>
+                <div class="report-item">
+                    <span class="report-label">Weekly Average</span>
+                    <span class="report-value" id="weeklyAvg">$0</span>
+                </div>
+                <div class="report-item">
+                    <span class="report-label">Monthly Total</span>
+                    <span class="report-value" id="monthlyTotal">$0</span>
+                </div>
+                <div class="report-item">
+                    <span class="report-label">Yearly Total</span>
+                    <span class="report-value" id="yearlyTotal">$0</span>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-title">By Subscription Type</div>
+                <div class="report-item">
+                    <span class="report-label">Daily Subscriptions</span>
+                    <span class="report-value" id="dailyCount">0</span>
+                </div>
+                <div class="report-item">
+                    <span class="report-label">Monthly Subscriptions</span>
+                    <span class="report-value" id="monthlyCount">0</span>
+                </div>
+                <div class="report-item">
+                    <span class="report-label">Yearly Subscriptions</span>
+                    <span class="report-value" id="yearlyCount">0</span>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-title">Most Expensive</div>
+                <div id="mostExpensiveList">
+                    <p class="text-muted">No data available</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('home')">
+            <i class="ri-home-4-line"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('subscription')">
+            <i class="ri-file-list-3-line"></i>
+            <span>Subscription</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('report')">
+            <i class="ri-bar-chart-2-line"></i>
+            <span>Report</span>
+        </button>
     </nav>
 
-    <!-- Install Prompt -->
-    <div class="install-prompt" id="installPrompt">
-        <div class="alert alert-primary alert-dismissible fade show shadow-lg" role="alert">
-            <i class="ri-download-cloud-line"></i>
-            <strong>Install App</strong>
-            <p class="mb-2">Add Subscription Manager to your home screen for quick access!</p>
-            <button class="btn btn-sm btn-light me-2" onclick="installApp()">
-                <i class="ri-download-line"></i> Install
-            </button>
-            <button class="btn btn-sm btn-outline-light" onclick="dismissInstall()">
-                Later
-            </button>
-            <button type="button" class="btn-close" onclick="dismissInstall()"></button>
-        </div>
-    </div>
-
-    <div class="container py-4">
-        <!-- Statistics Cards -->
-        <div class="row mb-4" id="statsSection">
-            <div class="col-md-4 mb-3">
-                <div class="card stats-card">
-                    <div class="card-body">
-                        <div class="stats-icon bg-primary bg-opacity-10 text-primary">
-                            <i class="ri-calendar-line"></i>
-                        </div>
-                        <h6 class="text-muted mb-2">Monthly Spend</h6>
-                        <div class="amount-display" id="monthlySpend">₹0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card stats-card">
-                    <div class="card-body">
-                        <div class="stats-icon bg-success bg-opacity-10 text-success">
-                            <i class="ri-calendar-check-line"></i>
-                        </div>
-                        <h6 class="text-muted mb-2">Yearly Spend</h6>
-                        <div class="amount-display" id="yearlySpend">₹0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card stats-card">
-                    <div class="card-body">
-                        <div class="stats-icon bg-info bg-opacity-10 text-info">
-                            <i class="ri-bank-card-2-line"></i>
-                        </div>
-                        <h6 class="text-muted mb-2">Active Subscriptions</h6>
-                        <div class="amount-display" id="totalSubscriptions">0</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add Subscription Button -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">My Subscriptions</h4>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSubscriptionModal">
-                <i class="ri-add-line"></i> Add Subscription
-            </button>
-        </div>
-
-        <!-- Subscriptions List -->
-        <div id="subscriptionsList">
-            <div class="empty-state">
-                <i class="ri-inbox-line"></i>
-                <h5 class="text-muted mb-2">No Subscriptions Yet</h5>
-                <p class="text-muted">Click "Add Subscription" to start tracking your subscriptions</p>
-            </div>
-        </div>
-    </div>
+    <!-- Add Button -->
+    <button class="add-btn" data-bs-toggle="modal" data-bs-target="#addSubscriptionModal">
+        <i class="ri-add-line"></i>
+    </button>
 
     <!-- Add/Edit Subscription Modal -->
     <div class="modal fade" id="addSubscriptionModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">
-                        <i class="ri-add-circle-line"></i> Add Subscription
-                    </h5>
+                    <h5 class="modal-title" id="modalTitle">Add Subscription</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -332,16 +688,12 @@
 
                         <div class="mb-3">
                             <label class="form-label">Logo</label>
-                            <div class="mb-2">
-                                <input type="url" class="form-control" id="logoUrl" placeholder="Logo URL (optional)">
-                            </div>
-                            <div class="mb-2">
-                                <label class="btn btn-outline-secondary btn-sm w-100">
-                                    <i class="ri-upload-cloud-line"></i> Upload Logo
-                                    <input type="file" id="logoUpload" accept="image/*" style="display: none;" onchange="handleLogoUpload(this)">
-                                </label>
-                            </div>
-                            <div id="logoPreviewContainer" style="display: none;">
+                            <input type="url" class="form-control mb-2" id="logoUrl" placeholder="Logo URL (optional)">
+                            <label class="btn btn-outline-primary btn-sm w-100">
+                                <i class="ri-upload-cloud-line"></i> Upload Logo
+                                <input type="file" id="logoUpload" accept="image/*" style="display: none;" onchange="handleLogoUpload(this)">
+                            </label>
+                            <div id="logoPreviewContainer" class="logo-preview-container" style="display: none;">
                                 <img id="logoPreview" class="logo-preview" alt="Logo preview">
                             </div>
                         </div>
@@ -388,31 +740,57 @@
         </div>
     </div>
 
+    <!-- Menu Modal -->
+    <div class="modal fade" id="menuModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Menu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group">
+                        <button class="list-group-item list-group-item-action" onclick="exportData()">
+                            <i class="ri-download-line me-2"></i> Export Data
+                        </button>
+                        <button class="list-group-item list-group-item-action" onclick="importData()">
+                            <i class="ri-upload-line me-2"></i> Import Data
+                        </button>
+                        <button class="list-group-item list-group-item-action text-danger" onclick="clearAllData()">
+                            <i class="ri-delete-bin-line me-2"></i> Clear All Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Exchange rate (approximate, update as needed)
+        // Constants
         const EXCHANGE_RATE = 83; // 1 USD = 83 INR
+        const ICON_URL = 'https://subscription-manager-inky.vercel.app/subscription-manager-icons.png';
+        
         let currentCurrency = 'INR';
-        let deferredPrompt;
+        let currentTab = 'home';
         let subscriptions = [];
 
         // PWA Manifest
         const manifest = {
             name: "Subscription Manager",
             short_name: "SubManager",
-            description: "Track all your subscriptions in one place",
+            description: "Track all your subscriptions",
             start_url: window.location.pathname,
             display: "standalone",
             background_color: "#ffffff",
-            theme_color: "#0d6efd",
-            orientation: "portrait",
+            theme_color: "#2F80ED",
             icons: [
                 {
-                    src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230d6efd' rx='20'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='white'>💳</text></svg>",
+                    src: ICON_URL,
                     sizes: "512x512",
-                    type: "image/svg+xml",
+                    type: "image/png",
                     purpose: "any maskable"
                 }
             ]
@@ -420,91 +798,76 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Set up manifest
             const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
             const manifestURL = URL.createObjectURL(manifestBlob);
             document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
 
-            // Set today's date as default
             document.getElementById('startDate').valueAsDate = new Date();
-
-            // Load subscriptions
             loadSubscriptions();
 
-            // Service Worker Registration
             if ('serviceWorker' in navigator) {
                 registerServiceWorker();
             }
-
-            // Install prompt handler
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                
-                // Check if user hasn't dismissed the prompt before
-                if (!localStorage.getItem('installDismissed')) {
-                    setTimeout(() => {
-                        document.getElementById('installPrompt').style.display = 'block';
-                    }, 3000);
-                }
-            });
-
-            // Check if already installed
-            window.addEventListener('appinstalled', () => {
-                document.getElementById('installPrompt').style.display = 'none';
-                localStorage.setItem('installDismissed', 'true');
-            });
         });
 
-        // Register Service Worker
+        // Service Worker
         function registerServiceWorker() {
             const swCode = `
                 const CACHE_NAME = 'subscription-manager-v1';
-                
-                self.addEventListener('install', (event) => {
-                    self.skipWaiting();
-                });
-
-                self.addEventListener('activate', (event) => {
-                    event.waitUntil(clients.claim());
-                });
-
+                self.addEventListener('install', (event) => { self.skipWaiting(); });
+                self.addEventListener('activate', (event) => { event.waitUntil(clients.claim()); });
                 self.addEventListener('fetch', (event) => {
                     event.respondWith(
-                        caches.match(event.request).then((response) => {
-                            return response || fetch(event.request);
-                        })
+                        caches.match(event.request).then((response) => response || fetch(event.request))
                     );
                 });
             `;
-
             const blob = new Blob([swCode], { type: 'application/javascript' });
             const swURL = URL.createObjectURL(blob);
-
             navigator.serviceWorker.register(swURL)
                 .then(reg => console.log('Service Worker registered'))
                 .catch(err => console.log('Service Worker registration failed:', err));
         }
 
-        // Install App
-        async function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                
-                if (outcome === 'accepted') {
-                    localStorage.setItem('installDismissed', 'true');
-                }
-                
-                deferredPrompt = null;
-                document.getElementById('installPrompt').style.display = 'none';
+        // Tab Switching
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            if (tab === 'home') {
+                document.getElementById('homeSection').classList.add('active');
+            } else if (tab === 'subscription') {
+                document.getElementById('subscriptionSection').classList.add('active');
+            } else if (tab === 'report') {
+                document.getElementById('reportSection').classList.add('active');
+                updateReports();
             }
         }
 
-        // Dismiss Install Prompt
-        function dismissInstall() {
-            document.getElementById('installPrompt').style.display = 'none';
-            localStorage.setItem('installDismissed', 'true');
+        // Currency Switching
+        function switchCurrency(currency) {
+            currentCurrency = currency;
+            
+            // Update all currency buttons
+            ['currencyINR', 'currencyINR2', 'currencyINR3', 'currencyINR4'].forEach(id => {
+                document.getElementById(id).classList.toggle('active', currency === 'INR');
+            });
+            ['currencyUSD', 'currencyUSD2', 'currencyUSD3', 'currencyUSD4'].forEach(id => {
+                document.getElementById(id).classList.toggle('active', currency === 'USD');
+            });
+            
+            updateDisplay();
+            updateReports();
         }
 
         // Currency Conversion
@@ -521,28 +884,20 @@
             }
         }
 
-        // Switch Currency Display
-        function switchCurrency(currency) {
-            currentCurrency = currency;
-            document.getElementById('currencyINR').classList.toggle('active', currency === 'INR');
-            document.getElementById('currencyUSD').classList.toggle('active', currency === 'USD');
-            updateDisplay();
-        }
-
-        // Handle Logo Upload
+        // Logo Upload
         function handleLogoUpload(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('logoPreview').src = e.target.result;
                     document.getElementById('logoPreviewContainer').style.display = 'block';
-                    document.getElementById('logoUrl').value = ''; // Clear URL if file is uploaded
+                    document.getElementById('logoUrl').value = '';
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        // Load Subscriptions from Local Storage
+        // Load Subscriptions
         function loadSubscriptions() {
             const stored = localStorage.getItem('subscriptions');
             subscriptions = stored ? JSON.parse(stored) : [];
@@ -564,7 +919,7 @@
             const subscription = {
                 id: editId || Date.now().toString(),
                 name: document.getElementById('subName').value,
-                logo: logoUrl || (logoPreview.startsWith('data:') ? logoPreview : ''),
+                logo: logoUrl || (logoPreview && logoPreview.startsWith('data:') ? logoPreview : ''),
                 type: document.getElementById('subType').value,
                 amountINR: parseFloat(document.getElementById('amountINR').value),
                 amountUSD: parseFloat(document.getElementById('amountUSD').value),
@@ -580,14 +935,9 @@
 
             localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
             
-            // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('addSubscriptionModal'));
             modal.hide();
-            
-            // Reset form
             resetForm();
-            
-            // Update display
             updateDisplay();
         }
 
@@ -596,7 +946,7 @@
             const subscription = subscriptions.find(s => s.id === id);
             if (!subscription) return;
 
-            document.getElementById('modalTitle').innerHTML = '<i class="ri-edit-line"></i> Edit Subscription';
+            document.getElementById('modalTitle').textContent = 'Edit Subscription';
             document.getElementById('editId').value = subscription.id;
             document.getElementById('subName').value = subscription.name;
             document.getElementById('subType').value = subscription.type;
@@ -627,12 +977,12 @@
         function resetForm() {
             document.getElementById('subscriptionForm').reset();
             document.getElementById('editId').value = '';
-            document.getElementById('modalTitle').innerHTML = '<i class="ri-add-circle-line"></i> Add Subscription';
+            document.getElementById('modalTitle').textContent = 'Add Subscription';
             document.getElementById('logoPreviewContainer').style.display = 'none';
             document.getElementById('startDate').valueAsDate = new Date();
         }
 
-        // Calculate Monthly Equivalent
+        // Calculate Monthly Amount
         function calculateMonthlyAmount(amount, type) {
             switch (type) {
                 case 'daily':
@@ -648,98 +998,189 @@
 
         // Update Display
         function updateDisplay() {
-            const container = document.getElementById('subscriptionsList');
+            const currencySymbol = currentCurrency === 'INR' ? '₹' : '$';
             
-            if (subscriptions.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="ri-inbox-line"></i>
-                        <h5 class="text-muted mb-2">No Subscriptions Yet</h5>
-                        <p class="text-muted">Click "Add Subscription" to start tracking your subscriptions</p>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = subscriptions.map(sub => {
-                    const amount = currentCurrency === 'INR' ? sub.amountINR : sub.amountUSD;
-                    const currencySymbol = currentCurrency === 'INR' ? '₹' : '$';
-                    const monthlyAmount = calculateMonthlyAmount(amount, sub.type);
-                    
-                    const typeColors = {
-                        'monthly': 'primary',
-                        'yearly': 'success',
-                        'daily': 'warning'
-                    };
-
-                    const logoDisplay = sub.logo 
-                        ? `<img src="${sub.logo}" class="subscription-logo" alt="${sub.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 100 100\\'><rect width=\\'100\\' height=\\'100\\' fill=\\'%23e9ecef\\'/><text x=\\'50\\' y=\\'60\\' font-size=\\'40\\' text-anchor=\\'middle\\' fill=\\'%236c757d\\'>${sub.name.charAt(0).toUpperCase()}</text></svg>'">`
-                        : `<div class="subscription-logo d-flex align-items-center justify-content-center bg-light" style="font-size: 24px; font-weight: 600; color: #6c757d;">${sub.name.charAt(0).toUpperCase()}</div>`;
-
-                    return `
-                        <div class="card subscription-card">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        ${logoDisplay}
-                                    </div>
-                                    <div class="col">
-                                        <h5 class="mb-1">${sub.name}</h5>
-                                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                                            <span class="subscription-type-badge bg-${typeColors[sub.type]} bg-opacity-10 text-${typeColors[sub.type]}">
-                                                ${sub.type.charAt(0).toUpperCase() + sub.type.slice(1)}
-                                            </span>
-                                            <small class="text-muted">
-                                                <i class="ri-calendar-line"></i> Since ${new Date(sub.startDate).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto text-end">
-                                        <div class="h4 mb-1">${currencySymbol}${amount.toFixed(2)}</div>
-                                        <small class="text-muted">~${currencySymbol}${monthlyAmount.toFixed(2)}/mo</small>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="btn-group">
-                                            <button class="btn btn-sm btn-outline-primary" onclick="editSubscription('${sub.id}')">
-                                                <i class="ri-edit-line"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteSubscription('${sub.id}')">
-                                                <i class="ri-delete-bin-line"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            updateStats();
-        }
-
-        // Update Statistics
-        function updateStats() {
+            // Update stats
             let monthlyTotal = 0;
             let yearlyTotal = 0;
 
             subscriptions.forEach(sub => {
                 const amount = currentCurrency === 'INR' ? sub.amountINR : sub.amountUSD;
                 const monthlyAmount = calculateMonthlyAmount(amount, sub.type);
-                
                 monthlyTotal += monthlyAmount;
                 yearlyTotal += monthlyAmount * 12;
             });
 
-            const currencySymbol = currentCurrency === 'INR' ? '₹' : '$';
-            
             document.getElementById('monthlySpend').textContent = `${currencySymbol}${monthlyTotal.toFixed(2)}`;
             document.getElementById('yearlySpend').textContent = `${currencySymbol}${yearlyTotal.toFixed(2)}`;
-            document.getElementById('totalSubscriptions').textContent = subscriptions.length;
+            document.getElementById('totalCount').textContent = subscriptions.length;
+
+            // Update subscription lists
+            updateSubscriptionList('subscriptionList');
+            updateSubscriptionList('allSubscriptionList');
+        }
+
+        // Update Subscription List
+        function updateSubscriptionList(containerId) {
+            const container = document.getElementById(containerId);
+            const currencySymbol = currentCurrency === 'INR' ? '₹' : '$';
+            
+            if (subscriptions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="ri-inbox-line"></i>
+                        <h5>No Subscriptions Yet</h5>
+                        <p>Tap the + button to add your first subscription</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = subscriptions.map(sub => {
+                const amount = currentCurrency === 'INR' ? sub.amountINR : sub.amountUSD;
+                const logoSrc = sub.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(sub.name)}&size=48&background=2F80ED&color=fff`;
+                
+                const startDate = new Date(sub.startDate);
+                const formattedDate = startDate.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    year: 'numeric' 
+                });
+
+                return `
+                    <div class="subscription-item" onclick="editSubscription('${sub.id}')">
+                        <img src="${logoSrc}" class="sub-logo" alt="${sub.name}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(sub.name)}&size=48&background=2F80ED&color=fff'">
+                        <div class="sub-info">
+                            <div class="sub-header">
+                                <span class="sub-name">${sub.name}</span>
+                                <span class="sub-type-badge ${sub.type}">${sub.type.charAt(0).toUpperCase() + sub.type.slice(1)}</span>
+                            </div>
+                            <div class="sub-details">
+                                <span class="sub-amount">${currencySymbol}${amount.toFixed(2)}</span>
+                                <span class="sub-date">| Since ${formattedDate}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update Reports
+        function updateReports() {
+            const currencySymbol = currentCurrency === 'INR' ? '₹' : '$';
+            
+            let monthlyTotal = 0;
+            let dailyCount = 0;
+            let monthlyCount = 0;
+            let yearlyCount = 0;
+
+            subscriptions.forEach(sub => {
+                const amount = currentCurrency === 'INR' ? sub.amountINR : sub.amountUSD;
+                monthlyTotal += calculateMonthlyAmount(amount, sub.type);
+                
+                if (sub.type === 'daily') dailyCount++;
+                if (sub.type === 'monthly') monthlyCount++;
+                if (sub.type === 'yearly') yearlyCount++;
+            });
+
+            const dailyAvg = monthlyTotal / 30;
+            const weeklyAvg = monthlyTotal / 4.33;
+            const yearlyTotal = monthlyTotal * 12;
+
+            document.getElementById('dailyAvg').textContent = `${currencySymbol}${dailyAvg.toFixed(2)}`;
+            document.getElementById('weeklyAvg').textContent = `${currencySymbol}${weeklyAvg.toFixed(2)}`;
+            document.getElementById('monthlyTotal').textContent = `${currencySymbol}${monthlyTotal.toFixed(2)}`;
+            document.getElementById('yearlyTotal').textContent = `${currencySymbol}${yearlyTotal.toFixed(2)}`;
+
+            document.getElementById('dailyCount').textContent = dailyCount;
+            document.getElementById('monthlyCount').textContent = monthlyCount;
+            document.getElementById('yearlyCount').textContent = yearlyCount;
+
+            // Most expensive subscriptions
+            const sortedSubs = [...subscriptions].sort((a, b) => {
+                const amountA = currentCurrency === 'INR' ? a.amountINR : a.amountUSD;
+                const amountB = currentCurrency === 'INR' ? b.amountINR : b.amountUSD;
+                const monthlyA = calculateMonthlyAmount(amountA, a.type);
+                const monthlyB = calculateMonthlyAmount(amountB, b.type);
+                return monthlyB - monthlyA;
+            }).slice(0, 5);
+
+            const mostExpensiveContainer = document.getElementById('mostExpensiveList');
+            if (sortedSubs.length === 0) {
+                mostExpensiveContainer.innerHTML = '<p class="text-muted">No data available</p>';
+            } else {
+                mostExpensiveContainer.innerHTML = sortedSubs.map((sub, index) => {
+                    const amount = currentCurrency === 'INR' ? sub.amountINR : sub.amountUSD;
+                    const monthlyAmount = calculateMonthlyAmount(amount, sub.type);
+                    return `
+                        <div class="report-item">
+                            <span class="report-label">${index + 1}. ${sub.name}</span>
+                            <span class="report-value">${currencySymbol}${monthlyAmount.toFixed(2)}/mo</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Menu Functions
+        function openMenu() {
+            const modal = new bootstrap.Modal(document.getElementById('menuModal'));
+            modal.show();
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(subscriptions, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `subscriptions-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('menuModal'));
+            modal.hide();
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const imported = JSON.parse(event.target.result);
+                        if (Array.isArray(imported)) {
+                            subscriptions = imported;
+                            localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
+                            updateDisplay();
+                            alert('Data imported successfully!');
+                        }
+                    } catch (error) {
+                        alert('Invalid file format');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('menuModal'));
+            modal.hide();
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to delete all subscriptions? This cannot be undone.')) {
+                subscriptions = [];
+                localStorage.removeItem('subscriptions');
+                updateDisplay();
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('menuModal'));
+                modal.hide();
+            }
         }
 
         // Reset form when modal is closed
-        document.getElementById('addSubscriptionModal').addEventListener('hidden.bs.modal', function () {
-            resetForm();
-        });
+        document.getElementById('addSubscriptionModal').addEventListener('hidden.bs.modal', resetForm);
     </script>
 </body>
 </html>
