@@ -225,17 +225,33 @@
             background: white;
             padding: 16px;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
             box-shadow: var(--card-shadow);
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
         .subscription-item:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .subscription-item.with-actions {
+            cursor: default;
+            display: block;
+        }
+
+        .subscription-item.with-actions:hover {
+            transform: none;
+        }
+
+        .sub-main-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
         }
 
         .sub-logo {
@@ -248,6 +264,7 @@
 
         .sub-info {
             flex: 1;
+            min-width: 0;
         }
 
         .sub-header {
@@ -301,6 +318,81 @@
         .sub-date {
             font-size: 13px;
             color: var(--text-muted);
+        }
+
+        .sub-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #F3F4F6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .action-btn.delete {
+            color: #EF4444;
+            background: #FEE2E2;
+        }
+
+        .action-btn.delete:hover {
+            background: #FECACA;
+        }
+
+        .action-btn.edit {
+            color: var(--primary-blue);
+            background: #DBEAFE;
+        }
+
+        .action-btn.edit:hover {
+            background: #BFDBFE;
+        }
+
+        .payment-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .payment-badge i {
+            font-size: 8px;
+        }
+
+        .payment-badge.upi {
+            color: var(--success-green);
+        }
+
+        .payment-badge.card {
+            color: var(--primary-blue);
+        }
+
+        .payment-badge.netbanking {
+            color: #F59E0B;
+        }
+
+        .payment-badge.wallet {
+            color: #8B5CF6;
         }
 
         /* Bottom Navigation */
@@ -507,6 +599,20 @@
         @media (max-width: 480px) {
             .stats-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .sub-actions {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+
+            .action-buttons {
+                justify-content: space-between;
+            }
+
+            .payment-badge {
+                justify-content: center;
             }
         }
     </style>
@@ -728,6 +834,16 @@
                             <label for="startDate" class="form-label">Start Date *</label>
                             <input type="date" class="form-control" id="startDate" required>
                         </div>
+
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">Payment Method *</label>
+                            <select class="form-select" id="paymentMethod" required>
+                                <option value="upi">UPI Payment</option>
+                                <option value="card">Card Payment</option>
+                                <option value="netbanking">Net Banking</option>
+                                <option value="wallet">Wallet</option>
+                            </select>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -923,7 +1039,8 @@
                 type: document.getElementById('subType').value,
                 amountINR: parseFloat(document.getElementById('amountINR').value),
                 amountUSD: parseFloat(document.getElementById('amountUSD').value),
-                startDate: document.getElementById('startDate').value
+                startDate: document.getElementById('startDate').value,
+                paymentMethod: document.getElementById('paymentMethod').value
             };
 
             if (editId) {
@@ -953,6 +1070,7 @@
             document.getElementById('amountINR').value = subscription.amountINR;
             document.getElementById('amountUSD').value = subscription.amountUSD;
             document.getElementById('startDate').value = subscription.startDate;
+            document.getElementById('paymentMethod').value = subscription.paymentMethod || 'upi';
 
             if (subscription.logo) {
                 document.getElementById('logoUrl').value = subscription.logo.startsWith('data:') ? '' : subscription.logo;
@@ -1024,6 +1142,7 @@
         function updateSubscriptionList(containerId) {
             const container = document.getElementById(containerId);
             const currencySymbol = currentCurrency === 'INR' ? '₹' : '$';
+            const showActions = containerId === 'allSubscriptionList'; // Only show actions in Subscription tab
             
             if (subscriptions.length === 0) {
                 container.innerHTML = `
@@ -1046,21 +1165,67 @@
                     year: 'numeric' 
                 });
 
-                return `
-                    <div class="subscription-item" onclick="editSubscription('${sub.id}')">
-                        <img src="${logoSrc}" class="sub-logo" alt="${sub.name}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(sub.name)}&size=48&background=2F80ED&color=fff'">
-                        <div class="sub-info">
-                            <div class="sub-header">
-                                <span class="sub-name">${sub.name}</span>
-                                <span class="sub-type-badge ${sub.type}">${sub.type.charAt(0).toUpperCase() + sub.type.slice(1)}</span>
+                const paymentMethodLabels = {
+                    'upi': 'UPI Payment',
+                    'card': 'Card Payment',
+                    'netbanking': 'Net Banking',
+                    'wallet': 'Wallet'
+                };
+
+                const paymentMethod = sub.paymentMethod || 'upi';
+                const paymentLabel = paymentMethodLabels[paymentMethod];
+
+                if (showActions) {
+                    // Subscription tab view with action buttons
+                    return `
+                        <div class="subscription-item with-actions">
+                            <div class="sub-main-content">
+                                <img src="${logoSrc}" class="sub-logo" alt="${sub.name}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(sub.name)}&size=48&background=2F80ED&color=fff'">
+                                <div class="sub-info">
+                                    <div class="sub-header">
+                                        <span class="sub-name">${sub.name}</span>
+                                        <span class="sub-type-badge ${sub.type}">${sub.type.charAt(0).toUpperCase() + sub.type.slice(1)}</span>
+                                    </div>
+                                    <div class="sub-details">
+                                        <span class="sub-amount">${currencySymbol}${amount.toFixed(2)}</span>
+                                        <span class="sub-date">| Since ${formattedDate}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="sub-details">
-                                <span class="sub-amount">${currencySymbol}${amount.toFixed(2)}</span>
-                                <span class="sub-date">| Since ${formattedDate}</span>
+                            <div class="sub-actions">
+                                <div class="action-buttons">
+                                    <button class="action-btn delete" onclick="deleteSubscription('${sub.id}'); event.stopPropagation();">
+                                        <i class="ri-delete-bin-line"></i> Delete
+                                    </button>
+                                    <button class="action-btn edit" onclick="editSubscription('${sub.id}'); event.stopPropagation();">
+                                        <i class="ri-edit-line"></i> Edit
+                                    </button>
+                                </div>
+                                <div class="payment-badge ${paymentMethod}">
+                                    <i class="ri-checkbox-blank-circle-fill"></i>
+                                    ${paymentLabel}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } else {
+                    // Home tab view - clickable card
+                    return `
+                        <div class="subscription-item" onclick="editSubscription('${sub.id}')">
+                            <img src="${logoSrc}" class="sub-logo" alt="${sub.name}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(sub.name)}&size=48&background=2F80ED&color=fff'">
+                            <div class="sub-info">
+                                <div class="sub-header">
+                                    <span class="sub-name">${sub.name}</span>
+                                    <span class="sub-type-badge ${sub.type}">${sub.type.charAt(0).toUpperCase() + sub.type.slice(1)}</span>
+                                </div>
+                                <div class="sub-details">
+                                    <span class="sub-amount">${currencySymbol}${amount.toFixed(2)}</span>
+                                    <span class="sub-date">| Since ${formattedDate}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             }).join('');
         }
 
